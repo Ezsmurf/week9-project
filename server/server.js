@@ -56,37 +56,43 @@ app.post('/products', async (req, res) => {
   }
 });
 
-// Route 3: Remove a product by _id
+// DELETE /products/:id - Delete a product by id
 app.delete('/products/:id', async (req, res) => {
-  const { id } = req.params;
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid product ID' });
+  }
   try {
-    const result = await collection.deleteOne({ _id: new ObjectId(id) });
-    if (result.deletedCount === 1) {
-      res.status(200).json({ message: 'Product deleted successfully' });
-    } else {
-      res.status(404).json({ error: 'Product not found' });
+    const result = await collection.deleteOne({ id });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Product not found' });
     }
+    res.status(200).json({ message: 'Product deleted successfully' });
   } catch (error) {
+    console.error(error); // Log the actual error for debugging
     res.status(500).json({ error: 'Failed to delete product' });
   }
 });
 
-// Route 4: Update a product by _id
-app.put('/products/:id', async (req, res) => {
-  const { id } = req.params;
-  const { name, description, price, units } = req.body;
 
+// PUT /products/:id - Update a product by id
+app.put('/products/:id', async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid product ID' });
+  }
+  const { name, description, price, units } = req.body;
   try {
     const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
+      { id },
       { $set: { name, description, price, units } }
     );
-    if (result.modifiedCount === 1) {
-      res.status(200).json({ message: 'Product updated successfully' });
-    } else {
-      res.status(404).json({ error: 'Product not found' });
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'Product not found' });
     }
+    res.status(200).json({ message: 'Product updated successfully' });
   } catch (error) {
+    console.error(error); // Log the actual error for debugging
     res.status(500).json({ error: 'Failed to update product' });
   }
 });

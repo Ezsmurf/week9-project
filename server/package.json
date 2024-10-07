@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +16,8 @@
     "mongodb": "^6.9.0"
   },
   "devDependencies": {
-    "chai": "^5.1.1",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "mocha": "^10.7.3"
   }
 }
